@@ -1,0 +1,6 @@
+sqlalchemy
+pandas
+numpy
+scrikit-learn
+pydantic
+fastapi
