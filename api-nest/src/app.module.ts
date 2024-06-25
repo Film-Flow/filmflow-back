@@ -1,11 +1,22 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { envSchema } from './env'
+import { EnvService } from './env/env.service'
+import { UsersModule } from './users/users.module'
+import { PrismaModule } from './prisma/prisma.module'
+import { MoviesModule } from './movies/movies.module'
 
 @Module({
-  imports: [UserModule],
-  controllers: [AppController],
-  providers: [AppService],
+    controllers: [],
+    providers: [EnvService],
+    imports: [
+        ConfigModule.forRoot({
+            validate: (env) => envSchema.parse(env),
+            isGlobal: true,
+        }),
+        UsersModule,
+        PrismaModule,
+        MoviesModule,
+    ],
 })
 export class AppModule {}
