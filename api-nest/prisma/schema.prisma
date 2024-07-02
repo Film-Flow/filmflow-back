@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  nickname      String?  @unique
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Foreign key
+  ratings         UserMovieRating[]
+  watch_list      Movie[]           @relation("WatchList")
+  reset_pass_code ResetPassCode?
+}
+
+model Movie {
+  id           String   @id @default(uuid())
+  title        String
+  release_year Int
+  gender       String
+  description  String
+  popularity   Float
+  rating       Float    @default(0)
+  runtime      Int
+  image        String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  // Foreign key
+  watched_by        User[]            @relation("WatchList")
+  user_movie_rating UserMovieRating[]
+}
+
+model UserMovieRating {
+  id     String @id @default(uuid())
+  rating Float
+
+  // Foreign key
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+  movie   Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  movieId String
+
+  @@unique([userId, movieId])
+}
+
+model ResetPassCode {
+  code       String   @default("")
+  expires_in DateTime @default(now())
+
+  // Foreign key
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
