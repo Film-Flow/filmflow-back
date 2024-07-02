@@ -6,6 +6,7 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
+import { EmailUnique } from '../validations/email-already-exists.validator';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -18,6 +19,7 @@ export class CreateUserDto {
   @IsString()
   @IsEmail()
   @IsNotEmpty()
+  @EmailUnique({})
   email: string;
 
   @ApiProperty()

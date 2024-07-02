@@ -18,6 +18,8 @@ export function changeErrorMessage({
       return `${property} deve ter mais caracteres.`;
     case 'maxLength':
       return `${property} deve ter menos caracteres.`;
+    // case 'emailAlreadyExists':
+    //   return 'Esse email já foi registrado.';
     default:
       return null;
   }
