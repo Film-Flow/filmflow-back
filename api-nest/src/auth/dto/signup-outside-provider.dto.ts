@@ -1,23 +1,13 @@
 import { AuthProvider } from '@prisma/client';
 import {
-  IsDate,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUUID,
 } from 'class-validator';
 
-export class User {
-  @IsString()
-  @IsUUID()
-  id: string;
-
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
+export class OutsideProviderDto {
   @IsString()
   @IsEmail()
   @IsNotEmpty()
@@ -25,25 +15,13 @@ export class User {
 
   @IsString()
   @IsNotEmpty()
-  password_hash: string;
+  display_name: string;
 
   @IsString()
   @IsOptional()
-  nickname: string;
-
-  @IsString()
-  @IsOptional()
-  image: string;
+  photo?: string;
 
   @IsEnum(AuthProvider)
   @IsNotEmpty()
   auth_provider: AuthProvider;
-
-  @IsDate()
-  @IsNotEmpty()
-  created_at: Date;
-
-  @IsDate()
-  @IsNotEmpty()
-  updated_at: Date;
 }

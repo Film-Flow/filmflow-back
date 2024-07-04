@@ -1,12 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { changeErrorMessage } from './utils/errosMessageValidator';
+import { ConfigService } from '@nestjs/config';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
 
   const config = new DocumentBuilder()
     .setTitle('Film Flow')
@@ -16,6 +19,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
+  // app.useGlobalFilters(new PrismaExceptionFilter());
+
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => {
@@ -24,8 +29,6 @@ async function bootstrap() {
             contraintKey: Object.keys(error.constraints)[0],
             property: error.property,
           });
-
-          console.log(error);
 
           if (!errorMessage) {
             errorMessage = error.constraints[Object.keys(error.constraints)[0]];
@@ -43,7 +46,22 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(3000);
-  console.log('API runing on http://localhost:3000');
+  app.enableCors({
+    origin: '*', // Ou especifique domínios específicos em vez de '*'
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true,
+  });
+
+  const configService = app.get(ConfigService);
+
+  const port = configService.get<string>('PORT');
+
+  await app.listen(port);
+  console.log(`
+    API runing on http://localhost:${port}
+    DOCS runing on http://localhost:${port}/docs
+  `);
 }
 bootstrap();
