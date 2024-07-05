@@ -12,13 +12,13 @@ export class UserService {
 
   async create(data: CreateUserDto): Promise<User> {
     const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(data.password, salt);
+    const password_hashed = await bcrypt.hash(data.password, salt);
 
     return this.prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
-        password_hash: password_hash,
+        password_hash: password_hashed,
         nickname: data.nickname ?? undefined,
         image: data.image ?? undefined,
         auth_provider: AuthProviderEnum.LOCAL,

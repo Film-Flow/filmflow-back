@@ -36,8 +36,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       refresh_token,
     };
 
-    await this.authService.validateUser(user);
+    const token = await this.authService.validateUser(user);
 
-    done(null, user);
+    done(null, token);
   }
 }

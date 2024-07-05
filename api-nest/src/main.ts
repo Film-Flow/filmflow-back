@@ -15,6 +15,10 @@ async function bootstrap() {
     .setTitle('Film Flow')
     .setDescription('Docs for film flow API')
     .setVersion('1.0')
+    .addSecurity('bearer', {
+      type: 'http',
+      scheme: 'bearer',
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

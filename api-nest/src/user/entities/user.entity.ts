@@ -24,12 +24,12 @@ export class User {
   email: string;
 
   @IsString()
-  @IsNotEmpty()
-  password_hash: string;
-
-  @IsString()
   @IsOptional()
   nickname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password_hash: string;
 
   @IsString()
   @IsOptional()

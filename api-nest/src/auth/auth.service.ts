@@ -10,15 +10,8 @@ import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { OutsideProviderDto } from './dto/signup-outside-provider.dto';
 import { ConfigService } from '@nestjs/config';
+import { Payload } from 'src/common/types';
 
-export type Payload = {
-  sub: string;
-  expiresIn: Date;
-};
-
-export type Req = {
-  user: Payload;
-};
 @Injectable()
 export class AuthService {
   constructor(
@@ -27,10 +20,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async signinLocal({
-    email,
-    password,
-  }: SignInLocalDto): Promise<{ access_token: string; refresh_token: string }> {
+  async handleSigninLocal({ email, password }: SignInLocalDto) {
     const user = await this.userService.findByEmail(email);
 
     if (!user || user?.auth_provider !== 'LOCAL') {
@@ -68,17 +58,67 @@ export class AuthService {
   async validateUser(data: OutsideProviderDto) {
     const user = await this.userService.findByEmail(data.email);
 
-    if (user) return user;
+    let userId: string = user?.id;
 
-    const newUser = this.userService.createUserFromOutsideProvider({
-      email: data.email,
-      display_name: data.display_name,
-      photo: data.photo,
-      auth_provider: data.auth_provider,
-    });
+    if (!user) {
+      const newUser = await this.userService.createUserFromOutsideProvider({
+        email: data.email,
+        display_name: data.display_name,
+        photo: data.photo,
+        auth_provider: data.auth_provider,
+      });
 
-    return newUser;
+      userId = newUser.id;
+    }
+
+    const accessTokenPayload = {
+      sub: userId,
+      expiresIn: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
+    };
+
+    const refreshTokenPayload = {
+      sub: userId,
+      expiresIn: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+    };
+
+    return {
+      access_token: await this.jwtService.signAsync(accessTokenPayload, {
+        secret: this.configService.get('ACCESS_TOKEN_JWT_SECRET'),
+        expiresIn: '2h',
+      }),
+      refresh_token: await this.jwtService.signAsync(refreshTokenPayload, {
+        secret: this.configService.get('REFRESH_TOKEN_JWT_SECRET'),
+        expiresIn: '7d',
+      }),
+    };
   }
 
-  logout() {}
+  async handleRefreshToken(id: string) {
+    const user = await this.userService.findById(id);
+
+    if (!user) {
+      throw new NotFoundException(MessagesHelper.USER_NOT_FOUND);
+    }
+
+    const accessTokenPayload = {
+      sub: user.id,
+      expiresIn: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
+    };
+
+    const refreshTokenPayload = {
+      sub: user.id,
+      expiresIn: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+    };
+
+    return {
+      access_token: await this.jwtService.signAsync(accessTokenPayload, {
+        secret: this.configService.get('ACCESS_TOKEN_JWT_SECRET'),
+        expiresIn: '2h',
+      }),
+      refresh_token: await this.jwtService.signAsync(refreshTokenPayload, {
+        secret: this.configService.get('REFRESH_TOKEN_JWT_SECRET'),
+        expiresIn: '7d',
+      }),
+    };
+  }
 }
