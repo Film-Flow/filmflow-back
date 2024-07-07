@@ -17,17 +17,37 @@ model User {
   updated_at    DateTime     @updatedAt
   image         String?
   auth_provider AuthProvider @default(LOCAL)
+  is_verified   Boolean      @default(false)
 
   // Foreign key
   ratings         UserMovieRating[]
   watch_list      Movie[]           @relation("WatchList")
   reset_pass_code ResetPassCode?
+  VerifyEmailCode VerifyEmailCode?
 }
 
 enum AuthProvider {
   LOCAL
   GOOGLE
   GITHUB
+}
+
+model ResetPassCode {
+  code       String   @default("")
+  expires_in DateTime @default(now())
+
+  // Foreign key
+  user_id String @unique
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model VerifyEmailCode {
+  code       String   @default("")
+  expires_in DateTime @default(now())
+
+  // Foreign key
+  user_id String @unique
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Movie {
@@ -53,19 +73,10 @@ model UserMovieRating {
   rating Float
 
   // Foreign key
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId  String
-  movie   Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
-  movieId String
+  user_id  String
+  user     User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  movie_id String
+  movie    Movie  @relation(fields: [movie_id], references: [id], onDelete: Cascade)
 
-  @@unique([userId, movieId])
-}
-
-model ResetPassCode {
-  code       String   @default("")
-  expires_in DateTime @default(now())
-
-  // Foreign key
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([user_id, movie_id])
 }

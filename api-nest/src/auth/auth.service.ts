@@ -27,6 +27,10 @@ export class AuthService {
       throw new NotFoundException(MessagesHelper.USER_NOT_FOUND);
     }
 
+    if (!user.is_verified) {
+      throw new UnauthorizedException(MessagesHelper.EMAIL_NOT_VERIFIED);
+    }
+
     const isMatch = await compare(password, user.password_hash);
 
     if (!isMatch) {
