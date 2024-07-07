@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -27,5 +28,8 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
+  @ApiProperty({
+    description: 'URL to the user image (optional)',
+  })
   image?: string;
 }
