@@ -6,6 +6,7 @@ import { MailerService } from 'src/mailer/mailer.service';
 import { ResetPassCodeService } from 'src/reset-pass-code/reset-pass-code.service';
 import { VerifyEmailCodeService } from 'src/verify-email-code/verify-email-code.service';
 import { VerifyEmailCodeModule } from 'src/verify-email-code/verify-email-code.module';
+import { FriendshipService } from 'src/friendship/friendship.service';
 
 @Module({
   controllers: [UserController],
@@ -15,6 +16,7 @@ import { VerifyEmailCodeModule } from 'src/verify-email-code/verify-email-code.m
     MailerService,
     VerifyEmailCodeService,
     ResetPassCodeService,
+    FriendshipService,
   ],
   exports: [UserService],
   imports: [forwardRef(() => VerifyEmailCodeModule)],

@@ -98,7 +98,7 @@ export class AuthService {
   }
 
   async handleRefreshToken(id: string) {
-    const user = await this.userService.findById(id);
+    const user = await this.userService.findProfile(id);
 
     if (!user) {
       throw new NotFoundException(MessagesHelper.USER_NOT_FOUND);

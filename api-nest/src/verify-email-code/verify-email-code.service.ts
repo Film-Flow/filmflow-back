@@ -113,6 +113,23 @@ export class VerifyEmailCodeService {
       throw new UnauthorizedException(MessagesHelper.INVALID_VERIFY_EMAIL_CODE);
     }
 
+    const user = await this.userService.findByEmail(email);
+
+    await this.prismaService.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        is_verified: true,
+      },
+    });
+
+    await this.prismaService.verifyEmailCode.delete({
+      where: {
+        user_id: user.id,
+      },
+    });
+
     return true;
   }
 }
