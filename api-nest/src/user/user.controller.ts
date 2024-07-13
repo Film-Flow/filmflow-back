@@ -1,29 +1,36 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   Post,
-  Body,
-  UseGuards,
   Request,
+  UseGuards,
   Query,
   Param,
   BadRequestException,
 } from '@nestjs/common';
+
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Req } from 'src/common/types';
-import { UserWithoutPassword } from './entities/user-without-password.entity';
 import { CreateUserResponseDto } from './dto/create-user-response.dto';
 import { UserPublicProfile } from './entities/user-public-profile.entity';
 import { FindUserQueryDto } from './dto/find-user-query.dto';
 import { MessagesHelper } from 'src/helpers/messages.helper';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserWithoutPassword } from './entities/user-without-password.entity';
+import { UserService } from './user.service';
 
 @Controller('user') // /user
 @ApiTags('user')
@@ -97,4 +104,25 @@ export class UserController {
 
     return this.userService.findMany(findUserQueryDto, req.user.sub);
   }
+  
+  
+  @Delete('profile') // /user/profile
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Deleta o usuário logado.' })
+  async deleteProfile(@Request() req: Req): Promise<{message: string, deletedAt: Date}> {
+    await this.userService.delete(req.user.sub);
+    return { 
+      message: 'Usuário deletado com sucesso.',
+      deletedAt: new Date()
+    }
+  }
+
+  // @UseGuards(AuthGuard)
+  // @Put('profile') // /user/profile
+  // @ApiBearerAuth()
+  // @ApiOperation({ summary: 'Deleta o usuário logado.' })
+  // async updateProfile(@Request() req: Req): Promise<UserWithoutPassword> {
+  //   await this.userService.updateProfile(req.user.sub);
+  //   return user;
+  // }
 }

@@ -5,12 +5,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateVerifyEmailCodeDto } from './dto/create-verify-email-code.dto';
 import { MessagesHelper } from 'src/helpers/messages.helper';
-import { VerifyCodeDto } from './dto/verify-code.dto';
 import { MailerService } from 'src/mailer/mailer.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
+import { CreateVerifyEmailCodeDto } from './dto/create-verify-email-code.dto';
+import { VerifyCodeDto } from './dto/verify-code.dto';
 import { VerifyEmailCode } from './entities/verify-email-code.entity';
 
 @Injectable()
@@ -26,6 +26,14 @@ export class VerifyEmailCodeService {
     email,
     code,
   }: CreateVerifyEmailCodeDto): Promise<VerifyEmailCode> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException(MessagesHelper.USER_NOT_FOUND);
+    }
     return this.prismaService.verifyEmailCode.create({
       data: {
         code,
