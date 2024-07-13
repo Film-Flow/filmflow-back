@@ -18,18 +18,43 @@ model User {
   image         String?
   auth_provider AuthProvider @default(LOCAL)
   is_verified   Boolean      @default(false)
+  is_private    Boolean      @default(false)
 
   // Foreign key
-  ratings         UserMovieRating[]
-  watch_list      Movie[]           @relation("WatchList")
-  reset_pass_code ResetPassCode?
-  VerifyEmailCode VerifyEmailCode?
+  ratings           UserMovieRating[]
+  watch_list        Movie[]           @relation("WatchList")
+  reset_pass_code   ResetPassCode?
+  verify_email_code VerifyEmailCode?
+
+  // Friendship
+  sent_friendship_requests     Friendship[] @relation("Requester")
+  received_friendship_requests Friendship[] @relation("Addressee")
 }
 
 enum AuthProvider {
   LOCAL
   GOOGLE
   GITHUB
+}
+
+model Friendship {
+  id           String           @id @default(uuid())
+  requester_id String
+  addressee_id String
+  status       FriendshipStatus @default(PENDING)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  requester User @relation("Requester", fields: [requester_id], references: [id])
+  addressee User @relation("Addressee", fields: [addressee_id], references: [id])
+
+  @@unique([requester_id, addressee_id])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 model ResetPassCode {

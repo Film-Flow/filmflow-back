@@ -11,4 +11,7 @@ export const MessagesHelper = {
   VERIFY_EMAIL_CODE_NOT_EXPIRED:
     'Código de verificação de email ainda é válido.',
   EMAIL_NOT_VERIFIED: 'Email não verificado.',
+  FRIENDSHIP_NOT_FOUND: 'Amizade não encontrada.',
+  NO_INIT_OR_LIMIT_PARAM_FOUND: 'Nenhum parâmetro init ou limit encontrado.',
+  NO_QUERY_PARAMS: 'Nenhum parâmetro de consulta encontrado.',
 };

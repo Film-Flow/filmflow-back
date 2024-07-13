@@ -9,11 +9,16 @@ import { validate } from './config/env.validation';
 import { MailerModule } from './mailer/mailer.module';
 import { VerifyEmailCodeModule } from './verify-email-code/verify-email-code.module';
 import { ResetPassCodeModule } from './reset-pass-code/reset-pass-code.module';
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
   imports: [
     UserModule,
+    FriendshipModule,
     AuthModule,
+    VerifyEmailCodeModule,
+    ResetPassCodeModule,
+    MailerModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validate,
@@ -21,9 +26,6 @@ import { ResetPassCodeModule } from './reset-pass-code/reset-pass-code.module';
     JwtModule.register({
       global: true,
     }),
-    MailerModule,
-    VerifyEmailCodeModule,
-    ResetPassCodeModule,
   ],
   controllers: [AppController],
   providers: [PrismaService],

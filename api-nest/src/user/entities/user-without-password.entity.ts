@@ -4,12 +4,14 @@ import {
   IsString,
   IsUUID,
   IsNotEmpty,
-  IsEmail,
   IsOptional,
-  IsEnum,
   IsDate,
+  IsArray,
   IsBoolean,
+  IsEmail,
+  IsEnum,
 } from 'class-validator';
+import { Friendship } from 'src/friendship/entities/friendship.entity';
 
 export class UserWithoutPassword {
   @IsString()
@@ -21,20 +23,13 @@ export class UserWithoutPassword {
   name: string;
 
   @IsString()
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
-  @IsString()
   @IsOptional()
   nickname: string;
 
   @IsString()
-  @IsOptional()
-  @ApiProperty({
-    description: 'URL to the user image (opcional)',
-  })
-  image: string;
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
   @IsEnum(AuthProvider)
   @IsNotEmpty()
@@ -47,6 +42,13 @@ export class UserWithoutPassword {
   @IsBoolean()
   is_verified: boolean;
 
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'URL to the user image (opcional)',
+  })
+  image: string;
+
   @IsDate()
   @IsNotEmpty()
   created_at: Date;
@@ -54,4 +56,12 @@ export class UserWithoutPassword {
   @IsDate()
   @IsNotEmpty()
   updated_at: Date;
+
+  @IsArray()
+  @IsOptional()
+  sent_friendship_request?: Friendship[];
+
+  @IsArray()
+  @IsOptional()
+  received_friendship_request?: Friendship[];
 }
