@@ -6,8 +6,11 @@ Site para avaliação e recomendação de filmes.
 
 - [x] Deve ser possível se cadastrar;
 - [x] Deve ser possível se autenticar;
-- [x] Deve ser possível obter o perfil de um usuário logado;
-- [x] Deve ser possível avaliar um filme;
+- [x] Deve ser possível obter o perfil de um usuário logado, assim como seus amigos e seus pedidos de amizade recebidos e enviados;
+- [ ] Deve ser possível enviar um pedido de amizade para outro usuário;
+- [ ] Deve ser possível aceitar ou rejeitar um pedido de amizade;
+- [ ] Deve ser possível listar todos os filmes;
+- [ ] Deve ser possível avaliar um filme;
 - [ ] Deve ser possível escrever uma crítica sobre um filme;
 - [ ] Deve ser possível salvar um filme para assistir depois;
 - [ ] O usuário deve receber recomendações de filmes com base em suas avaliações;
