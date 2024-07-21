@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class FriendshipUserDto {
   @IsString()
@@ -6,10 +7,10 @@ export class FriendshipUserDto {
   name: string;
 
   @IsString()
-  @IsOptional()
+  @ApiPropertyOptional()
   nickname: string;
 
   @IsString()
-  @IsOptional()
+  @ApiPropertyOptional()
   email: string;
 }

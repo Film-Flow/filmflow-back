@@ -1,11 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsUUID,
-  IsNotEmpty,
-  IsOptional,
-  IsBoolean,
-} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsUUID, IsNotEmpty, IsBoolean } from 'class-validator';
 
 export class UserPublicProfile {
   @IsString()
@@ -17,11 +11,11 @@ export class UserPublicProfile {
   name: string;
 
   @IsString()
-  @IsOptional()
+  @ApiPropertyOptional()
   nickname: string;
 
   @IsString()
-  @IsOptional()
+  @ApiPropertyOptional()
   @ApiProperty({
     description: 'URL to the user image (opcional)',
   })

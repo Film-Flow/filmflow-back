@@ -11,17 +11,12 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiParam,
   ApiTags,
+  ApiParam,
 } from '@nestjs/swagger';
-
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Req } from 'src/common/types';
 import { CreateUserResponseDto } from './dto/create-user-response.dto';
@@ -31,13 +26,17 @@ import { MessagesHelper } from 'src/helpers/messages.helper';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserWithoutPassword } from './entities/user-without-password.entity';
 import { UserService } from './user.service';
+import { WebsocketGateway } from 'src/websocket/websocket.gateway';
 
-@Controller('user') // /user
+@Controller('user')
 @ApiTags('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private websocket: WebsocketGateway,
+  ) {}
 
-  @Post() // POST /user
+  @Post()
   @ApiOperation({ summary: 'Cria um usuário utilizando o provedor local' })
   async create(
     @Body() createUserDto: CreateUserDto,
@@ -54,12 +53,12 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('profile') // /user/profile
+  @Get('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Lista as informações do usuário logado.' })
   async getProfile(@Request() req: Req): Promise<UserWithoutPassword> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password_hash, ...user } = await this.userService.findProfile(
+    const { password_hash, ...user } = await this.userService.findById(
       req.user.sub,
     );
     return user;
@@ -82,10 +81,10 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Get('')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Lista os usuários.' })
-  async findUser(
+  async findUsers(
     @Request() req: Req,
     @Query() findUserQueryDto: FindUserQueryDto,
   ) {
@@ -104,17 +103,28 @@ export class UserController {
 
     return this.userService.findMany(findUserQueryDto, req.user.sub);
   }
-  
-  
-  @Delete('profile') // /user/profile
+
+  @Delete('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Deleta o usuário logado.' })
-  async deleteProfile(@Request() req: Req): Promise<{message: string, deletedAt: Date}> {
+  async deleteProfile(
+    @Request() req: Req,
+  ): Promise<{ message: string; deletedAt: Date }> {
     await this.userService.delete(req.user.sub);
-    return { 
+    return {
       message: 'Usuário deletado com sucesso.',
-      deletedAt: new Date()
-    }
+      deletedAt: new Date(),
+    };
+  }
+
+  @Post('websocket')
+  async teste(@Body() text: string) {
+    this.websocket.handleFriendRequest({
+      senderId: 'eu',
+      receiverId: 'carlos',
+    });
+
+    return 'qualquer';
   }
 
   // @UseGuards(AuthGuard)

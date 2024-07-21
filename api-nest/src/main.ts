@@ -58,6 +58,8 @@ async function bootstrap() {
     credentials: true,
   });
 
+  console.log('CORS Configured');
+
   const configService = app.get(ConfigService);
 
   const port = configService.get<string>('PORT');

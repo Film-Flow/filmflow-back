@@ -1,9 +1,9 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   Max,
   Min,
@@ -12,11 +12,11 @@ import { FindUserQueryDate } from 'src/common/enums/find-user-query-date.enum';
 
 export class FindUserQueryDto {
   @IsString()
-  @IsOptional()
+  @ApiPropertyOptional()
   name?: string;
 
   @IsEnum(FindUserQueryDate)
-  @IsOptional()
+  @ApiPropertyOptional()
   date?: FindUserQueryDate;
 
   @Type(() => Number)

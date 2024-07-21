@@ -1,6 +1,4 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { OutsideProviderDto } from 'src/auth/dto/signup-outside-provider.dto';
 import { AuthProviderEnum } from 'src/common/enums/auth-provider.enum';
@@ -9,7 +7,6 @@ import { MailerService } from 'src/mailer/mailer.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { VerifyEmailCodeService } from 'src/verify-email-code/verify-email-code.service';
 import { FriendshipService } from 'src/friendship/friendship.service';
-import { User } from './entities/user.entity';
 import { UserPublicProfile } from './entities/user-public-profile.entity';
 import { FindUserQueryDto } from './dto/find-user-query.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -29,17 +26,6 @@ export class UserService {
     const password_hashed = await bcrypt.hash(data.password, salt);
 
     const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
-     
-    const user = await this.prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        password_hash: password_hashed,
-        nickname: data.nickname ?? undefined,
-        image: data.image ?? undefined,
-        auth_provider: AuthProviderEnum.LOCAL,
-      },
-    });
 
     const user = await this.prisma.user.create({
       data: {
@@ -93,7 +79,7 @@ export class UserService {
     });
   }
 
-  findProfile(id: string): Promise<User | undefined> {
+  findById(id: string): Promise<User | undefined> {
     return this.prisma.user.findUnique({
       where: {
         id,
@@ -212,16 +198,15 @@ export class UserService {
 
     return users;
   }
-  
+
   async delete(id: string): Promise<User> {
-    const user = await this.findById(id)
+    const user = await this.findById(id);
     if (!user) throw new NotFoundException(MessagesHelper.USER_NOT_FOUND);
-    
+
     return this.prisma.user.delete({
       where: {
         id,
       },
     });
   }
- 
 }

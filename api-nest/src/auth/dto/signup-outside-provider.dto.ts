@@ -1,11 +1,6 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { AuthProvider } from '@prisma/client';
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 export class OutsideProviderDto {
   @IsString()
@@ -18,7 +13,7 @@ export class OutsideProviderDto {
   display_name: string;
 
   @IsString()
-  @IsOptional()
+  @ApiPropertyOptional()
   photo?: string;
 
   @IsEnum(AuthProvider)

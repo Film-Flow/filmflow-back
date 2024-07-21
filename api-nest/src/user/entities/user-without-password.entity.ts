@@ -1,10 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { AuthProvider } from '@prisma/client';
 import {
   IsString,
   IsUUID,
   IsNotEmpty,
-  IsOptional,
   IsDate,
   IsArray,
   IsBoolean,
@@ -23,7 +22,7 @@ export class UserWithoutPassword {
   name: string;
 
   @IsString()
-  @IsOptional()
+  @ApiPropertyOptional()
   nickname: string;
 
   @IsString()
@@ -43,7 +42,7 @@ export class UserWithoutPassword {
   is_verified: boolean;
 
   @IsString()
-  @IsOptional()
+  @ApiPropertyOptional()
   @ApiProperty({
     description: 'URL to the user image (opcional)',
   })
@@ -58,10 +57,10 @@ export class UserWithoutPassword {
   updated_at: Date;
 
   @IsArray()
-  @IsOptional()
+  @ApiPropertyOptional()
   sent_friendship_request?: Friendship[];
 
   @IsArray()
-  @IsOptional()
+  @ApiPropertyOptional()
   received_friendship_request?: Friendship[];
 }

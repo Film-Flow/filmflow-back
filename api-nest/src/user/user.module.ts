@@ -7,6 +7,7 @@ import { ResetPassCodeService } from 'src/reset-pass-code/reset-pass-code.servic
 import { VerifyEmailCodeService } from 'src/verify-email-code/verify-email-code.service';
 import { VerifyEmailCodeModule } from 'src/verify-email-code/verify-email-code.module';
 import { FriendshipService } from 'src/friendship/friendship.service';
+import { WebsocketGateway } from 'src/websocket/websocket.gateway';
 
 @Module({
   controllers: [UserController],
@@ -17,6 +18,7 @@ import { FriendshipService } from 'src/friendship/friendship.service';
     VerifyEmailCodeService,
     ResetPassCodeService,
     FriendshipService,
+    WebsocketGateway,
   ],
   exports: [UserService],
   imports: [forwardRef(() => VerifyEmailCodeModule)],
